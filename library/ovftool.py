@@ -2,11 +2,14 @@
 
 __author__ = 'pacogomez'
 
-from pyVim import connect
-from pyVmomi import vim
-import requests
-import ssl
 import atexit
+import ssl
+
+import requests
+from ansible.module_utils.basic import *
+from pyVmomi import vim
+from pyVim import connect
+
 
 def connect_to_api(vchost, vc_user, vc_pwd):
     if hasattr(ssl, 'SSLContext'):
@@ -21,6 +24,7 @@ def connect_to_api(vchost, vc_user, vc_pwd):
     atexit.register(connect.Disconnect, service_instance)
     return service_instance.RetrieveContent()
 
+
 def get_all_objs(content, vimtype):
     obj = {}
     container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, True)
@@ -28,12 +32,14 @@ def get_all_objs(content, vimtype):
         obj.update({managed_object_ref: managed_object_ref.name})
     return obj
 
+
 def find_virtual_machine(content, vm_name):
     virtual_machines = get_all_objs(content, [vim.VirtualMachine])
     for vm in virtual_machines:
         if vm.name == vm_name:
             return vm
     return None
+
 
 def main():
     module = AnsibleModule(
@@ -56,10 +62,11 @@ def main():
             power_on=dict(required=False, type='bool', default=True),
             ssl_verify=dict(required=False, type='bool', default=True),
             props=dict(required=False, type='dict'),
+            deployment_option=dict(required=False, type='str')
         ),
         supports_check_mode=True,
     )
-    
+
     try:
         content = connect_to_api(module.params['vcenter'], module.params['vcenter_user'],
                                  module.params['vcenter_password'])
@@ -76,9 +83,9 @@ def main():
     ovftool_exec = '{}/ovftool'.format(module.params['ovftool_path'])
     ova_file = '{}/{}'.format(module.params['path_to_ova'], module.params['ova_file'])
     vi_string = 'vi://{}:{}@{}'.format(module.params['vcenter_user'],
-                                                   module.params['vcenter_password'],
-                                                   module.params['vcenter'])
-    if len(module.params['datacenter'].strip())>0:
+                                       module.params['vcenter_password'],
+                                       module.params['vcenter'])
+    if len(module.params['datacenter'].strip()) > 0:
         vi_string += '/{}/host/{}'.format(module.params['datacenter'], module.params['cluster'])
     command_tokens = [ovftool_exec]
 
@@ -87,14 +94,15 @@ def main():
     if not module.params['ssl_verify']:
         command_tokens.append('--noSSLVerify')
     command_tokens.extend([
-                        '--acceptAllEulas',
-                        '--skipManifestCheck',
-                        '--allowExtraConfig',
-                        '--diskMode={}'.format(module.params['disk_mode']),
-                        '--datastore={}'.format(module.params['datastore']),
-                        '--name={}'.format(module.params['vm_name']),])
-    
-    if 'ovf_network_name' in module.params.keys() and module.params['ovf_network_name'] is not None and len(module.params['ovf_network_name']) > 0:
+        '--acceptAllEulas',
+        '--skipManifestCheck',
+        '--allowExtraConfig',
+        '--diskMode={}'.format(module.params['disk_mode']),
+        '--datastore={}'.format(module.params['datastore']),
+        '--name={}'.format(module.params['vm_name']), ])
+
+    if 'ovf_network_name' in module.params.keys() and module.params['ovf_network_name'] is not None and len(
+            module.params['ovf_network_name']) > 0:
         command_tokens.append('--net:{}={}'.format(module.params['ovf_network_name'], module.params['portgroup']))
     else:
         command_tokens.append('--network={}'.format(module.params['portgroup']))
@@ -104,6 +112,9 @@ def main():
             command_tokens.append('--prop:{}={}'.format(key, module.params['props'][key]))
     if 'vm_password_key' in module.params and 'vm_password' in module.params:
         command_tokens.append('--prop:{}={}'.format(module.params['vm_password_key'], module.params['vm_password']))
+    if 'deployment_option' in module.params:
+        command_tokens.append('--deploymentOption={}'.format(module.params['deployment_option']))
+
     command_tokens.extend([ova_file, vi_string])
 
     ova_tool_result = module.run_command(command_tokens)
@@ -113,8 +124,6 @@ def main():
 
     module.exit_json(changed=True, ova_tool_result=ova_tool_result)
 
-
-from ansible.module_utils.basic import *
 
 if __name__ == '__main__':
     main()
