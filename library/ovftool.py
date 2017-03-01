@@ -78,7 +78,7 @@ def main():
     target_vm = find_virtual_machine(content, module.params['vm_name'])
 
     if target_vm:
-        module.fail_json(msg='A VM with the name {} is already present'.format(module.params['vm_name']))
+        module.exit_json(msg='A VM with the name {} is already present'.format(module.params['vm_name']))
 
     ovftool_exec = '{}/ovftool'.format(module.params['ovftool_path'])
     ova_file = '{}/{}'.format(module.params['path_to_ova'], module.params['ova_file'])
