@@ -6,12 +6,15 @@ import atexit
 import ssl
 
 import requests
+import urllib
 from ansible.module_utils.basic import *
 from pyVmomi import vim
 from pyVim import connect
 
 
 def connect_to_api(vchost, vc_user, vc_pwd):
+    vc_user = urllib.unquote(vc_user)
+
     if hasattr(ssl, 'SSLContext'):
         context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
         context.verify_mode = ssl.CERT_NONE
