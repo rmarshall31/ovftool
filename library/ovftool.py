@@ -13,8 +13,6 @@ from pyVim import connect
 
 
 def connect_to_api(vchost, vc_user, vc_pwd):
-    vc_user = urllib.unquote(vc_user)
-
     if hasattr(ssl, 'SSLContext'):
         context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
         context.verify_mode = ssl.CERT_NONE
@@ -85,7 +83,8 @@ def main():
 
     ovftool_exec = '{}/ovftool'.format(module.params['ovftool_path'])
     ova_file = '{}/{}'.format(module.params['path_to_ova'], module.params['ova_file'])
-    vi_string = 'vi://{}:{}@{}'.format(module.params['vcenter_user'],
+    quoted_vcenter_user = urllib.quote(module.params['vcenter_user'])
+    vi_string = 'vi://{}:{}@{}'.format(quoted_vcenter_user,
                                        module.params['vcenter_password'],
                                        module.params['vcenter'])
     if len(module.params['datacenter'].strip()) > 0:
