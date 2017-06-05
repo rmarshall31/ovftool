@@ -58,7 +58,7 @@ def main():
             path_to_ova=dict(required=True, type='str'),
             ova_file=dict(required=True, type='str'),
             vm_name=dict(required=True, type='str'),
-            vm_password_key=dict(required=False, type='str'),
+            vm_password_key=dict(required=False, type='str', no_log=True),
             vm_password=dict(required=False, type='str', no_log=True),
             power_on=dict(required=False, type='bool', default=True),
             ssl_verify=dict(required=False, type='bool', default=True),
