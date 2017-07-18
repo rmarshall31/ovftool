@@ -4,12 +4,12 @@ __author__ = 'pacogomez'
 
 import atexit
 import ssl
+import urllib
 
 import requests
-import urllib
 from ansible.module_utils.basic import *
-from pyVmomi import vim
 from pyVim import connect
+from pyVmomi import vim
 
 
 def connect_to_api(vchost, vc_user, vc_pwd):
@@ -112,7 +112,8 @@ def main():
     if module.params['props']:
         for key in module.params['props'].keys():
             command_tokens.append('--prop:{}={}'.format(key, module.params['props'][key]))
-    if 'vm_password_key' in module.params and 'vm_password' in module.params:
+    if 'vm_password_key' in module.params and module.params['vm_password_key'] and 'vm_password' in module.params and \
+            module.params['vm_password']:
         command_tokens.append('--prop:{}={}'.format(module.params['vm_password_key'], module.params['vm_password']))
     if 'deployment_option' in module.params:
         command_tokens.append('--deploymentOption={}'.format(module.params['deployment_option']))
