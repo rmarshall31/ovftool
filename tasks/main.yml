@@ -18,4 +18,4 @@
     props: '{{ props | default (dict()) }}'
     deployment_option: '{{ deployment_option | default() }}'
     ovf_network_name: '{{ ovf_network_name | default() }}'
-
+    vcenter_folder: '{{ vcenter_folder | default() }}'

@@ -64,6 +64,7 @@ def main():
             ssl_verify=dict(required=False, type='bool', default=True),
             props=dict(required=False, type='dict'),
             deployment_option=dict(required=False, type='str')
+            vcenter_folder=dict(required=False, type='str')
         ),
         supports_check_mode=True,
     )
@@ -117,6 +118,8 @@ def main():
         command_tokens.append('--prop:{}={}'.format(module.params['vm_password_key'], module.params['vm_password']))
     if 'deployment_option' in module.params:
         command_tokens.append('--deploymentOption={}'.format(module.params['deployment_option']))
+    if 'vcenter_folder' in module.params and module.params['vcenter_folder'] is not None:
+        command_tokens.append('--vmFolder={}'.format(module.params['vcenter_folder']))
 
     command_tokens.extend([ova_file, vi_string])
 
