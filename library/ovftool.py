@@ -63,7 +63,7 @@ def main():
             power_on=dict(required=False, type='bool', default=True),
             ssl_verify=dict(required=False, type='bool', default=True),
             props=dict(required=False, type='dict'),
-            deployment_option=dict(required=False, type='str')
+            deployment_option=dict(required=False, type='str'),
             vcenter_folder=dict(required=False, type='str')
         ),
         supports_check_mode=True,
