@@ -5,6 +5,7 @@ __author__ = 'pacogomez'
 import atexit
 import ssl
 import urllib
+import json
 
 import requests
 from ansible.module_utils.basic import *
@@ -105,8 +106,13 @@ def main():
         '--name={}'.format(module.params['vm_name']), ])
 
     if 'ovf_network_name' in module.params.keys() and module.params['ovf_network_name'] is not None and len(
-            module.params['ovf_network_name']) > 0:
-        command_tokens.append('--net:{}={}'.format(module.params['ovf_network_name'], module.params['portgroup']))
+                module.params['ovf_network_name']) > 0:
+            try:
+                d=json.loads(module.params['ovf_network_name'].replace("'", "\""))
+                for key,network_item in d.iteritems():
+                    command_tokens.append('--net:{}={}'.format(key, network_item))
+            except ValueError, e:
+                command_tokens.append('--net:{}={}'.format(module.params['ovf_network_name'], module.params['portgroup']))
     else:
         command_tokens.append('--network={}'.format(module.params['portgroup']))
 
