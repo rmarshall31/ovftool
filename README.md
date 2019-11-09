@@ -26,11 +26,17 @@ Role Variables
 	ovf_network_name
 	vcenter_folder
 
+Role Requirements
+-----------------
+
+This role needs the "ovftool" binary available here:
+    https://www.vmware.com/support/developer/ovf/
+
 Example Playbook
 ----------------
 
 To use in your playbook:
-
+```
 - name: Create OVA VM
   include_role:
     name: ovftool
@@ -51,3 +57,4 @@ To use in your playbook:
     ovf_network_name:
       ova_network1: 'my_esxi_network1'
       ova_network2: 'my_esxi_network1'
+```
