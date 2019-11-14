@@ -58,3 +58,16 @@ To use in your playbook:
       ova_network1: 'my_esxi_network1'
       ova_network2: 'my_esxi_network1'
 ```
+
+A URL can be used instead of a local path and file by setting the `path_to_ova` to the path portion of the URL.  For instance, updating the above example to use a URL looks something like this:
+
+```
+- name: Create OVA VM
+  include_role:
+    name: ovftool
+  vars:
+    ...
+    ova_path: 'https://some.hostname.com/path/to/ova'
+    ova_filename: 'CSCOlxplat-CentOS-nextX-7.6.20190125-4.ova'
+    ...
+```
