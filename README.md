@@ -68,6 +68,6 @@ A URL can be used instead of a local path and file by setting the `path_to_ova` 
   vars:
     ...
     ova_path: 'https://some.hostname.com/path/to/ova'
-    ova_filename: 'CSCOlxplat-CentOS-nextX-7.6.20190125-4.ova'
+    ova_filename: 'ova_file.ova'
     ...
 ```
