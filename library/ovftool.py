@@ -54,6 +54,7 @@ def main():
             cluster=dict(required=True, type='str'),
             datastore=dict(required=True, type='str'),
             ovf_network_name=dict(required=False, type='str'),
+            debug_opts=dict(required=False, type='str'),
             portgroup=dict(required=True, type='str'),
             disk_mode=dict(required=False, type='str', default='thin'),
             path_to_ova=dict(required=True, type='str'),
@@ -126,6 +127,13 @@ def main():
         command_tokens.append('--deploymentOption={}'.format(module.params['deployment_option']))
     if 'vcenter_folder' in module.params and module.params['vcenter_folder'] is not None:
         command_tokens.append('--vmFolder={}'.format(module.params['vcenter_folder']))
+
+    if 'debug_opts' in module.params.keys() and module.params['debug_opts'] is not None and len(module.params['debug_opts']) > 0:
+        d=json.loads(module.params['debug_opts'].replace("'", "\""))
+        for key,debug_item in d.iteritems():
+            command_tokens.append('--X:{}={}'.format(key, debug_item))
+    else:
+        command_tokens.append('--X:{}'.format(module.params['debug_opts']))
 
     command_tokens.extend([ova_file, vi_string])
 
