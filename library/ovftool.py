@@ -88,7 +88,7 @@ def main():
     ova_file = '{}/{}'.format(module.params['path_to_ova'], module.params['ova_file'])
     quoted_vcenter_user = urllib.quote(module.params['vcenter_user'])
     vi_string = 'vi://{}:{}@{}'.format(quoted_vcenter_user,
-                                       module.params['vcenter_password'],
+                                       urllib.quote(module.params['vcenter_password'], safe=''),
                                        module.params['vcenter'])
     if len(module.params['datacenter'].strip()) > 0:
         vi_string += '/{}/host/{}'.format(module.params['datacenter'], module.params['cluster'])
